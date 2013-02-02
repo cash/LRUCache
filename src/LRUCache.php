@@ -5,6 +5,12 @@
  *
  * A fixed sized cache that removes the element used last when it reaches its
  * size limit.
+ *
+ * The cache consists of a hashmap and a circular doubly linked list. The hashmap
+ * contains references to the nodes in the linked list for fast retrieval. The
+ * linked list is organized so that the next element after the head is the most
+ * recently used element and the previous element before the head is the least
+ * recently used element.
  */
 class LRUCache {
 	protected $maximumSize = 0;
@@ -23,6 +29,8 @@ class LRUCache {
 		}
 		$this->maximumSize = $size;
 
+		// the head is a null element that always points the most and least recently
+		// used elements
 		$this->head = new LRUCacheNode(null, null);
 		$this->head->after = $this->head->before = $this->head;
 	}
@@ -98,16 +106,16 @@ class LRUCache {
 	}
 
 	protected function add(LRUCacheNode $node) {
-		$this->map[$key] = $node;
-		$node->addBefore($this->head);
+		$this->map[$node->key] = $node;
+		$node->insertAfter($this->head);
 	}
 
 	protected function recordAccess(LRUCacheNode $node) {
 		$node->remove();
-		$node->addBefore($this->head);
+		$node->insertAfter($this->head);
 	}
 
 	protected function removeStalestNode() {
-		$this->remove($this->head->after->key);
+		$this->remove($this->head->prev->key);
 	}
 }

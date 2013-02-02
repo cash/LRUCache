@@ -3,9 +3,8 @@
 /**
  * A node class for the linked list in the LRUCache.
  *
- * This is used to implement a circular linked list where the node before the
- * head is the most recently used element and the node after the head is the
- * least recently used element.
+ * This node class supports doubly linked lists. It is used to implement a
+ * circular linked list in the LRUCache class.
  */
 class LRUCacheNode {
 	public $key;
@@ -13,10 +12,10 @@ class LRUCacheNode {
 	public $value;
 
 	/* @var LRUCacheNode */
-	public $before = null;
+	public $next = null;
 
 	/* @var LRUCacheNode */
-	public $after = null;
+	public $prev = null;
 
 	/**
 	 * Create a node for the linked list
@@ -30,22 +29,22 @@ class LRUCacheNode {
 	}
 
 	/**
-	 * Adds this node before the specified existing node
+	 * Adds this node after the specified existing node
 	 *
 	 * @param LRUCacheNode $node
 	 */
-	public function addBefore(LRUCacheNode $existingNode) {
-		$this->after = $existingNode;
-		$this->before = $existingNode->before;
-		$this->before->after = $this;
-		$this->after->before = $this;
+	public function insertAfter(LRUCacheNode $existingNode) {
+		$this->next = $existingNode->next;
+		$this->prev = $existingNode;
+		$existingNode->next = $this;
+		$this->next->prev = $this;
 	}
 
 	/**
 	 * Remove this node from the linked list
 	 */
 	public function remove() {
-		$this->before->after = $this->after;
-		$this->after->before = $this->before;
+		$this->prev->next = $this->next;
+		$this->next->prev = $this->prev;
 	}
 }
