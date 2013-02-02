@@ -32,14 +32,14 @@ class LRUCache {
 		// the head is a null element that always points the most and least recently
 		// used elements
 		$this->head = new LRUCacheNode(null, null);
-		$this->head->after = $this->head->before = $this->head;
+		$this->head->next = $this->head->prev = $this->head;
 	}
 
 	/**
 	 * Get the value cached with this key
 	 *
-	 * @param mixed $key      The key
-	 * @param mixed $default  The value to be returned if key not found. (Optional)
+	 * @param int|string $key      The key. Strings that are integers are cast to ints.
+	 * @param mixed      $default  The value to be returned if key not found. (Optional)
 	 * @return mixed
 	 */
 	public function get($key, $default = null) {
@@ -54,8 +54,8 @@ class LRUCache {
 	/**
 	 * Put something in the cache
 	 *
-	 * @param mixed $key   The key
-	 * @param mixed $value The value to cache
+	 * @param int|string $key      The key. Strings that are integers are cast to ints.
+	 * @param mixed      $value The value to cache
 	 */
 	public function put($key, $value) {
 		if ($this->containsKey($key)) {
@@ -82,7 +82,7 @@ class LRUCache {
 	/**
 	 * Does the cache contain an element with this key
 	 *
-	 * @param mixed $key The key
+	 * @param int|string $key The key
 	 * @return boolean
 	 */
 	public function containsKey($key) {
@@ -96,7 +96,7 @@ class LRUCache {
 	/**
 	 * Remove the element with this key.
 	 *
-	 * @param mixed $key The key
+	 * @param int|string $key The key
 	 */
 	public function remove($key) {
 		if ($this->containsKey($key)) {
