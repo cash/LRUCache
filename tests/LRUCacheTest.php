@@ -72,4 +72,10 @@ class LRUCacheTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($this->cache->containsKey(1));
 		$this->assertFalse($this->cache->containsKey(2));
 	}
+
+	function testClear() {
+		$this->cache->clear();
+		$this->assertEquals(0, $this->cache->size());
+		$this->assertFalse($this->cache->containsKey(1));
+	}
 }

@@ -105,6 +105,14 @@ class LRUCache {
 		}
 	}
 
+	/**
+	 * Clear the cache
+	 */
+	public function clear() {
+		$this->head->next = $this->head->prev = $this->head;
+		$this->map = array();
+	}
+
 	protected function add(LRUCacheNode $node) {
 		$this->map[$node->key] = $node;
 		$node->insertAfter($this->head);

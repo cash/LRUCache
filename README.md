@@ -1,6 +1,6 @@
 LRU Cache
 ============
-Implements a Least Recently Used cache.
+Implements a memory-based Least Recently Used cache.
 
 The keys can be integers or strings. The values can be anything. Because this
 library uses array(), keys that are strings that contain an integer ("7") are
