@@ -38,8 +38,8 @@ class LRUCache {
 	/**
 	 * Get the value cached with this key
 	 *
-	 * @param int|string $key      The key. Strings that are integers are cast to ints.
-	 * @param mixed      $default  The value to be returned if key not found. (Optional)
+	 * @param int|string $key     The key. Strings that are integers are cast to ints.
+	 * @param mixed      $default The value to be returned if key not found. (Optional)
 	 * @return mixed
 	 */
 	public function get($key, $default = null) {
@@ -54,7 +54,7 @@ class LRUCache {
 	/**
 	 * Put something in the cache
 	 *
-	 * @param int|string $key      The key. Strings that are integers are cast to ints.
+	 * @param int|string $key   The key. Strings that are integers are cast to ints.
 	 * @param mixed      $value The value to cache
 	 */
 	public function put($key, $value) {
