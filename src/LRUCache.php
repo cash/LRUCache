@@ -9,13 +9,14 @@
  * The cache consists of a hashmap and a circular doubly linked list. The hashmap
  * contains references to the nodes in the linked list for fast retrieval. The
  * linked list is organized so that the next element after the head is the most
- * recently used element and the previous element before the head is the least
- * recently used element.
+ * recently used element and the previous element before the head (the tail) is
+ * the least recently used element.
  */
 class LRUCache {
 	protected $maximumSize = 0;
 	protected $map = array();
-	protected $head = null;
+	/* @var LRUCacheList */
+	protected $list = null;
 
 	/**
 	 * Create a LRU Cache
@@ -28,11 +29,7 @@ class LRUCache {
 			throw new InvalidArgumentException();
 		}
 		$this->maximumSize = $size;
-
-		// the head is a null element that always points the most and least recently
-		// used elements
-		$this->head = new LRUCacheNode(null, null);
-		$this->head->next = $this->head->prev = $this->head;
+		$this->list = new LRUCacheList();
 	}
 
 	/**
@@ -62,8 +59,7 @@ class LRUCache {
 			$this->map[$key]->value = $value;
 			$this->recordAccess($this->map[$key]);
 		} else {
-			$node = new LRUCacheNode($key, $value);
-			$this->add($node);
+			$this->add($key, $value);
 			if ($this->size() > $this->maximumSize) {
 				$this->removeStalestNode();
 			}
@@ -100,7 +96,7 @@ class LRUCache {
 	 */
 	public function remove($key) {
 		if ($this->containsKey($key)) {
-			$this->map[$key]->remove();
+			$this->list->remove($this->map[$key]);
 			unset($this->map[$key]);
 		}
 	}
@@ -109,21 +105,22 @@ class LRUCache {
 	 * Clear the cache
 	 */
 	public function clear() {
-		$this->head->next = $this->head->prev = $this->head;
+		$this->list = new LRUCacheList();
 		$this->map = array();
 	}
 
-	protected function add(LRUCacheNode $node) {
+	protected function add($key, $value) {
+		$node = new LRUCacheNode($key, $value);
 		$this->map[$node->key] = $node;
-		$node->insertAfter($this->head);
+		$this->list->insertAfterHead($node);
 	}
 
 	protected function recordAccess(LRUCacheNode $node) {
-		$node->remove();
-		$node->insertAfter($this->head);
+		$this->list->remove($node);
+		$this->list->insertAfterHead($node);
 	}
 
 	protected function removeStalestNode() {
-		$this->remove($this->head->prev->key);
+		$this->remove($this->list->getTail()->key);
 	}
 }
