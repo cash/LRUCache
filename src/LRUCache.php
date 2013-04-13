@@ -5,18 +5,17 @@
  *
  * A fixed sized cache that removes the element used last when it reaches its
  * size limit.
- *
- * The cache consists of a hashmap and a circular doubly linked list. The hashmap
- * contains references to the nodes in the linked list for fast retrieval. The
- * linked list is organized so that the next element after the head is the most
- * recently used element and the previous element before the head (the tail) is
- * the least recently used element.
  */
 class LRUCache {
-	protected $maximumSize = 0;
-	protected $map = array();
-	/* @var LRUCacheList */
-	protected $list = null;
+	/** @var int */
+	protected $maximumSize;
+
+	/**
+	 * The front of the array contains the LRU element
+	 *
+	 * @var array
+	 */
+	protected $data = array();
 
 	/**
 	 * Create a LRU Cache
@@ -29,20 +28,19 @@ class LRUCache {
 			throw new InvalidArgumentException();
 		}
 		$this->maximumSize = $size;
-		$this->list = new LRUCacheList();
 	}
 
 	/**
 	 * Get the value cached with this key
 	 *
-	 * @param int|string $key     The key. Strings that are integers are cast to ints.
+	 * @param int|string $key     The key. Strings that are ints are cast to ints.
 	 * @param mixed      $default The value to be returned if key not found. (Optional)
 	 * @return mixed
 	 */
 	public function get($key, $default = null) {
-		if ($this->containsKey($key)) {
-			$this->recordAccess($this->map[$key]);
-			return $this->map[$key]->value;
+		if (isset($this->data[$key])) {
+			$this->recordAccess($key);
+			return $this->data[$key];
 		} else {
 			return $default;
 		}
@@ -51,17 +49,19 @@ class LRUCache {
 	/**
 	 * Put something in the cache
 	 *
-	 * @param int|string $key   The key. Strings that are integers are cast to ints.
+	 * @param int|string $key   The key. Strings that are ints are cast to ints.
 	 * @param mixed      $value The value to cache
 	 */
 	public function put($key, $value) {
-		if ($this->containsKey($key)) {
-			$this->map[$key]->value = $value;
-			$this->recordAccess($this->map[$key]);
+		if (isset($this->data[$key])) {
+			$this->data[$key] = $value;
+			$this->recordAccess($key);
 		} else {
-			$this->add($key, $value);
+			$this->data[$key] = $value;
 			if ($this->size() > $this->maximumSize) {
-				$this->removeStalestNode();
+				// remove least recently used element (front of array)
+				reset($this->data);
+				unset($this->data[key($this->data)]);
 			}
 		}
 	}
@@ -72,7 +72,7 @@ class LRUCache {
 	 * @return int
 	 */
 	public function size() {
-		return count($this->map);
+		return count($this->data);
 	}
 
 	/**
@@ -82,22 +82,22 @@ class LRUCache {
 	 * @return boolean
 	 */
 	public function containsKey($key) {
-		if (isset($this->map[$key])) {
-			return true;
-		} else {
-			return false;
-		}
+		return isset($this->data[$key]);
 	}
 
 	/**
 	 * Remove the element with this key.
 	 *
 	 * @param int|string $key The key
+	 * @return mixed Value or null if not set
 	 */
 	public function remove($key) {
-		if ($this->containsKey($key)) {
-			$this->list->remove($this->map[$key]);
-			unset($this->map[$key]);
+		if (isset($this->data[$key])) {
+			$value = $this->data[$key];
+			unset($this->data[$key]);
+			return $value;
+		} else {
+			return null;
 		}
 	}
 
@@ -105,22 +105,17 @@ class LRUCache {
 	 * Clear the cache
 	 */
 	public function clear() {
-		$this->list = new LRUCacheList();
-		$this->map = array();
+		$this->data = array();
 	}
 
-	protected function add($key, $value) {
-		$node = new LRUCacheNode($key, $value);
-		$this->map[$node->key] = $node;
-		$this->list->insertAfterHead($node);
-	}
-
-	protected function recordAccess(LRUCacheNode $node) {
-		$this->list->remove($node);
-		$this->list->insertAfterHead($node);
-	}
-
-	protected function removeStalestNode() {
-		$this->remove($this->list->getTail()->key);
+	/**
+	 * Moves the element from current position to end of array
+	 * 
+	 * @param int|string $key The key
+	 */
+	protected function recordAccess($key) {
+		$value = $this->data[$key];
+		unset($this->data[$key]);
+		$this->data[$key] = $value;
 	}
 }
