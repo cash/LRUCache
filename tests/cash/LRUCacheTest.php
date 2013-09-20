@@ -1,5 +1,7 @@
 <?php
 
+use cash\LRUCache;
+
 class LRUCacheTest extends PHPUnit_Framework_TestCase {
 	function setUp() {
 		$this->cache = new LRUCache(4);
@@ -11,21 +13,21 @@ class LRUCacheTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException InvalidArgumentException
+	 * @expectedException \InvalidArgumentException
 	 */
 	function testConstructorZero() {
 		$cache = new LRUCache(0);
 	}
 
 	/**
-	 * @expectedException InvalidArgumentException
+	 * @expectedException \InvalidArgumentException
 	 */
 	function testConstructorNegative() {
 		$cache = new LRUCache(-1);
 	}
 
 	/**
-	 * @expectedException InvalidArgumentException
+	 * @expectedException \InvalidArgumentException
 	 */
 	function testConstructorString() {
 		$cache = new LRUCache("1");

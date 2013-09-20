@@ -1,5 +1,7 @@
 <?php
 
+namespace cash;
+
 /**
  * Least Recently Used Cache
  *
@@ -21,11 +23,11 @@ class LRUCache {
 	 * Create a LRU Cache
 	 *
 	 * @param int $size
-	 * @throws InvalidArgumentException
+	 * @throws \InvalidArgumentException
 	 */
 	public function __construct($size) {
 		if (!is_int($size) || $size <= 0) {
-			throw new InvalidArgumentException();
+			throw new \InvalidArgumentException();
 		}
 		$this->maximumSize = $size;
 	}
