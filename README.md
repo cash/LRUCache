@@ -1,7 +1,7 @@
 LRU Cache
 ============
 
-[![Build Status](https://secure.travis-ci.org/cash/LRUCache.png)](http://travis-ci.org/cash/LRUCache)
+[![Build Status](https://travis-ci.org/cash/LRUCache.png)](http://travis-ci.org/cash/LRUCache)
 
 Implements a non-persistent memory-based Least Recently Used cache.
 
