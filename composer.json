@@ -1,6 +1,9 @@
 {
     "name": "cash/lrucache",
+    "type": "library",
     "description": "An efficient memory-based Least Recently Used (LRU) cache",
+    "keywords": ["cache", "lru"],
+    "homepage": "https://github.com/cash/LRUCache",
     "license": "MIT",
     "authors": [
         {
